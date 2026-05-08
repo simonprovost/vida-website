@@ -1,6 +1,5 @@
 import { SectionShell } from "@/components/layout/SectionShell";
 import type { Project } from "@/lib/projects";
-import Image from "next/image";
 import Link from "next/link";
 
 type Props = {
@@ -26,11 +25,10 @@ function FeaturedProject({ project }: { project: Project }) {
       {/* Background image with overlay */}
       {project.image && (
         <div className="relative w-full sm:w-1/3 aspect-video overflow-hidden rounded-lg bg-zinc-100 dark:bg-zinc-900 shrink-0">
-          <Image
+          <img
             src={project.image}
             alt={project.title}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         </div>
       )}
@@ -100,11 +98,11 @@ function ProjectCard({ project }: { project: Project }) {
       {/* Image header */}
       {project.image && (
         <div className="relative w-full sm:w-48 aspect-video overflow-hidden rounded-lg bg-zinc-100 dark:bg-zinc-900 shrink-0 mb-3 sm:mb-0">
-          <Image
+          <img
             src={project.image}
             alt={project.title}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            referrerPolicy="no-referrer"
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         </div>
       )}

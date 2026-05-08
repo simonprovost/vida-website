@@ -1,8 +1,7 @@
 "use client";
-"use no memo";
 
 import Link from "next/link";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import { useScroll, useMotionValueEvent, motion } from "framer-motion";
 
 type MissionHeroProps = {
@@ -13,44 +12,48 @@ type MissionHeroProps = {
 export function MissionHero({ peopleCount, publicationsCount }: MissionHeroProps) {
   const containerRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  
-  // Use absolute scroll position of the page
+
   const { scrollY } = useScroll();
 
-  useEffect(() => {
-    // Ensure video starts at 0 and is paused
-    if (videoRef.current) {
-      videoRef.current.currentTime = 0;
-      videoRef.current.pause();
-    }
-  }, []);
+  // useCallback with empty deps so refs are always read imperatively — never stale
+  const scrubVideo = useCallback((latest: number) => {
+    const container = containerRef.current;
+    const video = videoRef.current;
+    if (!container || !video) return;
+    const duration = video.duration;
+    if (!duration || !Number.isFinite(duration) || duration <= 0) return;
 
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    if (!containerRef.current || !videoRef.current) return;
-    
-    // Get the section's position relative to viewport
-    const rect = containerRef.current.getBoundingClientRect();
+    const rect = container.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
-    
-    // Animation starts when section bottom enters viewport (rect.bottom = viewportHeight)
-    // Animation ends when section top reaches top of viewport (rect.top = 0)
-    // So the scroll range is from (absoluteTop - viewportHeight) to absoluteTop
-    
     const absoluteTop = rect.top + latest;
     const scrollStart = absoluteTop - viewportHeight;
     const scrollEnd = absoluteTop;
-    
-    // Calculate progress: 0 when section enters viewport, 1 when section reaches top
     const scrollRange = scrollEnd - scrollStart;
     const progress = Math.max(0, Math.min((latest - scrollStart) / scrollRange, 1));
-    
-    // Scrub video to match progress
-    const duration = videoRef.current.duration || 5;
-    
-    // Safety check for NaN
-    if (Number.isFinite(progress) && Number.isFinite(duration)) {
-      videoRef.current.currentTime = progress * duration;
+
+    if (Number.isFinite(progress)) {
+      video.currentTime = progress * duration;
     }
+  }, []);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.currentTime = 0;
+    video.pause();
+
+    const onMetadata = () => {
+      video.currentTime = 0;
+      video.pause();
+      scrubVideo(scrollY.get());
+    };
+
+    video.addEventListener("loadedmetadata", onMetadata);
+    return () => video.removeEventListener("loadedmetadata", onMetadata);
+  }, [scrubVideo, scrollY]);
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    scrubVideo(latest);
   });
 
   return (

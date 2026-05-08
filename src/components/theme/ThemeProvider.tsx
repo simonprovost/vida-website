@@ -30,8 +30,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    setThemeState(prefersDark ? "dark" : "light");
+    setThemeState("light");
   }, []);
 
   useEffect(() => {
