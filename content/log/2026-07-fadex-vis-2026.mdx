@@ -1,0 +1,14 @@
+---
+slug: "2026-07-fadex-vis-2026"
+title: "FADEx Paper Accepted to IEEE VIS 2026"
+date: "2026-07-16"
+kind: "news"
+summary: "The paper 'FADEx: Feature Attribution and Distortion-based Explanation of Dimensionality Reduction' has been accepted to IEEE VIS 2026."
+link: ""
+image: ""
+video: ""
+---
+
+The paper "FADEx: Feature Attribution and Distortion-based Explanation of Dimensionality Reduction" has been accepted to IEEE VIS 2026, authored by Lucas Greff Meneses (ICMC-USP), Evandro Ortigossa (Weizmann Institute) and Luis Gustavo Nonato (ICMC-USP).
+
+The paper tackles a nice irony in high-dimensional data analysis: we use dimensionality reduction to make complex data understandable, but non-linear DR methods like t-SNE and UMAP are themselves opaque, so it's hard to know which features actually drive where points land in the projection. Existing explanation methods tend to be unstable, produce multiple conflicting attributions per feature, or only work with one specific DR technique. FADEx solves this with a local linear approximation built directly from the DR model via a first-order Taylor expansion, which makes it mathematically stable, DR-agnostic, and able to provide both feature attributions and distortion information at the same time. It works across DR methods with no out-of-sample mapping needed, making it a practical building block for visualization tools that explore high-dimensional data.
